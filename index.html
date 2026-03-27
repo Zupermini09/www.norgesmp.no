@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="nb">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorgeSMP – Norges egen Minecraft-server</title>
+  <meta name="description"
+    content="NorgeSMP er en norsk Minecraft survival-server for alle som vil spille med andre nordmenn. Koble til med IP: norgesmp.com" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Design tokens ─── */
+    :root {
+      --bg: #141414;
+      --panel: #2c2c2c;
+      --panel-alt: #363636;
+      --green: #55ff55;
+      --green-dark: #1a6b1a;
+      --green-btn: #2d7a2d;
+      --white: #ffffff;
+      --gray: #aaaaaa;
+      --red: #ff5555;
+      --gold: #ffaa00;
+      --gold-btn: #b87800;
+      --navh: 58px;
+    }
+
+    /* ─── Reset ─── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* ─── Body – subtle pixel grid ─── */
+    body {
+      background-color: var(--bg);
+      color: var(--white);
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      line-height: 1.5;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0, rgba(0, 0, 0, 0.10) 1px, transparent 1px, transparent 18px),
+        repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.10) 0, rgba(0, 0, 0, 0.10) 1px, transparent 1px, transparent 18px);
+    }
+
+    /* ─── Minecraft text shadow helper ─── */
+    .mc-shadow {
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.75);
+    }
+
+    /* ─── Container ─── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ─── Minecraft bevel panel ─── */
+    .mc-panel {
+      background: var(--panel);
+      box-shadow:
+        inset -3px -3px 0 rgba(0, 0, 0, 0.55),
+        inset 3px 3px 0 rgba(255, 255, 255, 0.10);
+    }
+
+    /* ─── Section spacing ─── */
+    section {
+      padding: 80px 0;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* ─── Section heading ─── */
+    .sec-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--green);
+      text-shadow: 2px 2px 0 #1a3a1a;
+      margin-bottom: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sec-title::before {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 1em;
+      background: var(--green);
+      box-shadow: 2px 2px 0 var(--green-dark);
+      flex-shrink: 0;
+    }
+
+    /* ─────────────────────────────────────
+       MINECRAFT BUTTONS
+    ───────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'VT323', monospace;
+      font-size: 1.35rem;
+      color: var(--white);
+      text-decoration: none;
+      padding: 10px 26px;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      background: #5a5a5a;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
+      box-shadow:
+        inset -3px -4px 0 rgba(0, 0, 0, 0.50),
+        inset 3px 3px 0 rgba(255, 255, 255, 0.14);
+      transition: background 0.08s, filter 0.08s;
+    }
+
+    .btn:hover {
+      background: #767676;
+      filter: brightness(1.08);
+    }
+
+    .btn:active {
+      box-shadow:
+        inset 3px 4px 0 rgba(0, 0, 0, 0.50),
+        inset -3px -3px 0 rgba(255, 255, 255, 0.14);
+      filter: brightness(0.95);
+    }
+
+    .btn-green {
+      background: var(--green-btn);
+      color: var(--white);
+    }
+
+    .btn-green:hover {
+      background: #3a9a3a;
+    }
+
+    .btn-gold {
+      background: var(--gold-btn);
+      color: var(--white);
+    }
+
+    .btn-gold:hover {
+      background: #d48a00;
+    }
+
+    /* Disabled WIP button */
+    .btn-wip {
+      background: #3a3a3a;
+      color: #777;
+      pointer-events: none;
+      cursor: not-allowed;
+      box-shadow:
+        inset -3px -4px 0 rgba(0, 0, 0, 0.40),
+        inset 3px 3px 0 rgba(255, 255, 255, 0.07);
+    }
+
+    .wip-label {
+      font-size: 0.75rem;
+      background: #4a4a00;
+      color: #ffcc00;
+      padding: 1px 5px;
+      box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.4), inset 1px 1px 0 rgba(255, 255, 220, 0.15);
+      letter-spacing: 0.05em;
+    }
+
+    /* ─────────────────────────────────────
+       NAVBAR
+    ───────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--navh);
+      z-index: 100;
+      background: #0f0f0f;
+      border-bottom: 3px solid #000;
+      box-shadow: 0 3px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      gap: 1rem;
+    }
+
+    .nav-logo {
+      font-family: 'VT323', monospace;
+      font-size: 2rem;
+      color: var(--green);
+      text-shadow: 2px 2px 0 #1a3a1a;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-logo:hover {
+      color: #88ff88;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      color: #aaa;
+      text-decoration: none;
+      padding: 6px 13px;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.7);
+      transition: color 0.12s;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Hamburger */
+    .nav-toggle {
+      display: none;
+      background: #3a3a3a;
+      border: none;
+      color: var(--white);
+      font-size: 1.4rem;
+      padding: 4px 10px;
+      cursor: pointer;
+      box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.5), inset 2px 2px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    /* ─────────────────────────────────────
+       HERO
+    ───────────────────────────────────── */
+    #hjem {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-top: var(--navh);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.06);
+      /* Subtle green glow from center */
+      background-image:
+        radial-gradient(ellipse at 50% 55%, rgba(85, 255, 85, 0.06) 0%, transparent 65%),
+        repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0, rgba(0, 0, 0, 0.10) 1px, transparent 1px, transparent 18px),
+        repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.10) 0, rgba(0, 0, 0, 0.10) 1px, transparent 1px, transparent 18px);
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 60px 0;
+    }
+
+    h1.hero-title {
+      font-family: 'VT323', monospace;
+      font-size: clamp(4.5rem, 14vw, 9rem);
+      color: var(--green);
+      text-shadow: 4px 4px 0 #1a3a1a, 6px 6px 0 rgba(0, 0, 0, 0.4);
+      line-height: 1;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      color: #aaa;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+      max-width: 520px;
+    }
+
+    /* Status panel */
+    .status-panel {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 22px 32px;
+      min-width: 320px;
+      text-align: left;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.3rem;
+    }
+
+    .s-label {
+      color: #888;
+      min-width: 90px;
+    }
+
+    .s-value {
+      color: var(--white);
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+    }
+
+    /* Pulsing dot */
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .dot.online {
+      background: var(--green);
+      animation: pulse-g 2s infinite;
+    }
+
+    .dot.offline {
+      background: var(--red);
+    }
+
+    .dot.loading {
+      background: #666;
+      animation: pulse-g2 1.2s infinite;
+    }
+
+    @keyframes pulse-g {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(85, 255, 85, 0.6);
+      }
+
+      50% {
+        box-shadow: 0 0 0 5px rgba(85, 255, 85, 0);
+      }
+    }
+
+    @keyframes pulse-g2 {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+    }
+
+    /* Inline IP copy */
+    .ip-copy-inline {
+      font-family: 'VT323', monospace;
+      font-size: 1.3rem;
+      color: var(--green);
+      text-shadow: 1px 1px 0 #1a3a1a;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ip-copy-inline:hover {
+      color: #88ff88;
+    }
+
+    .ip-copy-inline span {
+      font-size: 0.9rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    /* ─────────────────────────────────────
+       OM SERVEREN
+    ───────────────────────────────────── */
+    .about-text {
+      font-size: 1.2rem;
+      color: #bbb;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.7);
+      max-width: 640px;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+
+    .feature-card {
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .feature-card .f-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .feature-card h3 {
+      font-family: 'VT323', monospace;
+      font-size: 1.5rem;
+      color: var(--green);
+      text-shadow: 2px 2px 0 #1a3a1a;
+    }
+
+    .feature-card p {
+      font-size: 1rem;
+      color: #999;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    /* ─────────────────────────────────────
+       REGLER
+    ───────────────────────────────────── */
+    .rules-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 680px;
+    }
+
+    .rules-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 18px;
+      font-size: 1.15rem;
+      color: #ccc;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    .rule-num {
+      font-size: 1.5rem;
+      color: var(--green);
+      text-shadow: 2px 2px 0 #1a3a1a;
+      min-width: 24px;
+      line-height: 1.1;
+      flex-shrink: 0;
+    }
+
+    /* ─────────────────────────────────────
+       KOBLE TIL
+    ───────────────────────────────────── */
+    .steps {
+      max-width: 620px;
+    }
+
+    .step {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .step:last-child {
+      border-bottom: none;
+    }
+
+    .step-num {
+      font-family: 'VT323', monospace;
+      font-size: 1.7rem;
+      color: var(--green);
+      text-shadow: 2px 2px 0 #1a3a1a;
+      min-width: 30px;
+      line-height: 1;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .step-body strong {
+      display: block;
+      font-family: 'VT323', monospace;
+      font-size: 1.25rem;
+      color: var(--white);
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+    }
+
+    .step-body span {
+      font-size: 1rem;
+      color: #999;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    /* Big IP copy button */
+    .ip-big-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 2rem;
+      padding: 18px 32px;
+      cursor: pointer;
+      border: none;
+      background: var(--panel);
+      box-shadow:
+        inset -3px -4px 0 rgba(0, 0, 0, 0.55),
+        inset 3px 3px 0 rgba(255, 255, 255, 0.10);
+      transition: background 0.1s;
+    }
+
+    .ip-big-btn:hover {
+      background: var(--panel-alt);
+    }
+
+    .ip-big-btn:active {
+      box-shadow:
+        inset 3px 4px 0 rgba(0, 0, 0, 0.55),
+        inset -3px -3px 0 rgba(255, 255, 255, 0.10);
+    }
+
+    .ip-big-text {
+      font-family: 'VT323', monospace;
+      font-size: 2.4rem;
+      color: var(--green);
+      text-shadow: 3px 3px 0 #1a3a1a;
+      line-height: 1;
+    }
+
+    .ip-big-copy-icon {
+      font-size: 1.5rem;
+      color: #888;
+    }
+
+    .ip-hint {
+      font-size: 1rem;
+      color: #666;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+      margin-top: 8px;
+    }
+
+    .version-tag {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 1.1rem;
+      color: var(--gold);
+      text-shadow: 2px 2px 0 rgba(90, 50, 0, 0.8);
+      background: rgba(80, 50, 0, 0.4);
+      padding: 4px 14px;
+      box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.4), inset 2px 2px 0 rgba(255, 220, 100, 0.1);
+    }
+
+    /* ─────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────── */
+    footer {
+      background: #0f0f0f;
+      border-top: 3px solid #000;
+      padding: 30px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-logo {
+      font-family: 'VT323', monospace;
+      font-size: 1.8rem;
+      color: var(--green);
+      text-shadow: 2px 2px 0 #1a3a1a;
+    }
+
+    .footer-copy {
+      font-size: 1rem;
+      color: #666;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+      margin-top: 2px;
+    }
+
+    /* ─────────────────────────────────────
+       DONATION TOAST
+    ───────────────────────────────────── */
+    #donation-toast {
+      position: fixed;
+      bottom: -220px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      width: min(520px, calc(100vw - 2rem));
+      background: #1e1e1e;
+      box-shadow:
+        inset -3px -3px 0 rgba(0, 0, 0, 0.6),
+        inset 3px 3px 0 rgba(255, 255, 255, 0.08),
+        0 0 0 3px #000,
+        0 6px 40px rgba(0, 0, 0, 0.7);
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: bottom 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #donation-toast.visible {
+      bottom: 18px;
+    }
+
+    .toast-icon {
+      font-size: 2rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .toast-body {
+      flex: 1;
+    }
+
+    .toast-body p {
+      font-size: 1.05rem;
+      color: #bbb;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+      margin-bottom: 12px;
+    }
+
+    .toast-body p strong {
+      color: #eee;
+    }
+
+    .toast-close {
+      background: #3a3a3a;
+      border: none;
+      color: #aaa;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 3px 8px;
+      flex-shrink: 0;
+      align-self: flex-start;
+      box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.5), inset 2px 2px 0 rgba(255, 255, 255, 0.1);
+      line-height: 1;
+    }
+
+    .toast-close:hover {
+      background: #4a4a4a;
+      color: #fff;
+    }
+
+    /* ─────────────────────────────────────
+       COPY FEEDBACK
+    ───────────────────────────────────── */
+    .copy-feedback {
+      position: fixed;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-16px);
+      background: var(--green-dark);
+      color: var(--green);
+      font-family: 'VT323', monospace;
+      font-size: 1.3rem;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+      padding: 8px 22px;
+      box-shadow: inset -3px -3px 0 rgba(0, 0, 0, 0.5), inset 3px 3px 0 rgba(255, 255, 255, 0.1);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s, transform 0.18s;
+      z-index: 300;
+    }
+
+    .copy-feedback.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ─────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────── */
+    @media (max-width: 680px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .nav-links.open {
+        display: flex;
+        position: absolute;
+        top: var(--navh);
+        left: 0;
+        right: 0;
+        background: #0f0f0f;
+        border-bottom: 3px solid #000;
+        padding: 10px 1.5rem;
+      }
+
+      .nav-toggle {
+        display: block;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .status-panel {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Copy feedback toast -->
+  <div class="copy-feedback" id="copy-feedback">✓ norgesmp.com kopiert!</div>
+
+  <!-- ═══════════ NAVBAR ═══════════ -->
+  <nav id="navbar" role="navigation" aria-label="Hovednavigasjon">
+    <div class="nav-inner">
+      <a href="#hjem" class="nav-logo">NorgeSMP</a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#hjem">Hjem</a></li>
+        <li><a href="#om">Om serveren</a></li>
+        <li><a href="#regler">Regler</a></li>
+        <li><a href="#koble-til">Koble til</a></li>
+        <li>
+          <button class="btn btn-wip" id="shop-btn" aria-disabled="true" title="Butikken er ikke klar ennå">
+            Butikk <span class="wip-label">WIP 🚧</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="nav-right">
+        <a href="https://buymeacoffee.com/emilianovec" target="_blank" rel="noopener noreferrer" class="btn btn-gold"
+          id="nav-support-btn">
+          ☕ Støtt oss
+        </a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Åpne meny" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section id="hjem">
+    <div class="container">
+      <div class="hero-inner">
+
+        <h1 class="hero-title">NorgeSMP</h1>
+        <p class="hero-subtitle">Norges egen Minecraft survival-server</p>
+
+        <!-- Server status -->
+        <div class="mc-panel status-panel" aria-label="Server-status">
+          <div class="status-row">
+            <span class="s-label">Status</span>
+            <span class="dot loading" id="status-dot"></span>
+            <span class="s-value" id="status-text">Laster...</span>
+          </div>
+          <div class="status-row">
+            <span class="s-label">Spillere</span>
+            <span class="s-value" id="players-text">–</span>
+          </div>
+          <div class="status-row">
+            <span class="s-label">IP</span>
+            <button class="ip-copy-inline" id="hero-ip-btn" aria-label="Kopier server-IP norgesmp.com">
+              norgesmp.com <span>📋</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#koble-til" class="btn btn-green" id="hero-connect-btn">⚔ Koble til nå</a>
+          <a href="#om" class="btn" id="hero-about-btn">Les mer</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ OM SERVEREN ═══════════ -->
+  <section id="om">
+    <div class="container">
+      <h2 class="sec-title">Om serveren</h2>
+      <p class="about-text">
+        NorgeSMP er en norsk Minecraft survival-server for alle som vil spille med andre nordmenn.
+        Vi kjører Paper 1.21.1 med et balansert økonomi-system, vennlig community og stabile ytelser.
+        Her er det plass til alle – enten du er nybegynner eller veteranspiller.
+      </p>
+
+      <div class="feature-grid">
+        <div class="mc-panel feature-card">
+          <div class="f-icon">⚡</div>
+          <h3>Paper 1.21.1</h3>
+          <p>Optimalisert server med lav ping og høy oppetid.</p>
+        </div>
+        <div class="mc-panel feature-card">
+          <div class="f-icon">🏦</div>
+          <h3>Økonomi</h3>
+          <p>Balansert in-game økonomi med market og spillerhandel.</p>
+        </div>
+        <div class="mc-panel feature-card">
+          <div class="f-icon">🛡️</div>
+          <h3>Claim-system</h3>
+          <p>Beskytt bygningene dine – ingen griefing.</p>
+        </div>
+        <div class="mc-panel feature-card">
+          <div class="f-icon">🇳🇴</div>
+          <h3>Norsk community</h3>
+          <p>Vennlig fellesskap med aktiv Discord.</p>
+        </div>
+        <div class="mc-panel feature-card">
+          <div class="f-icon">🌐</div>
+          <h3>Eget nettverk</h3>
+          <p>Driftet på eget hardware og strømnett.</p>
+        </div>
+        <div class="mc-panel feature-card">
+          <div class="f-icon">🎯</div>
+          <h3>Survival fokus</h3>
+          <p>Vanilla-opplevelse uten pay-to-win.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ REGLER ═══════════ -->
+  <section id="regler">
+    <div class="container">
+      <h2 class="sec-title">Regler</h2>
+      <ol class="rules-list" aria-label="Serverregler">
+        <li class="mc-panel"><span class="rule-num">1</span>Vær respektfull mot alle spillere til enhver tid.</li>
+        <li class="mc-panel"><span class="rule-num">2</span>Ingen griefing, bombing eller stjeling fra andre spillere.
+        </li>
+        <li class="mc-panel"><span class="rule-num">3</span>Ingen jukseprogrammer, hacks, X-ray eller exploits.</li>
+        <li class="mc-panel"><span class="rule-num">4</span>Ikke spam i chatten – hold det ryddig og saklig.</li>
+        <li class="mc-panel"><span class="rule-num">5</span>Følg instruksjonene fra admins og moderatorer.</li>
+        <li class="mc-panel"><span class="rule-num">6</span>Ingen rasistiske, hatefulle eller støtende ytringer.</li>
+        <li class="mc-panel"><span class="rule-num">7</span>Ingen reklame for andre servere i chat eller meldinger.</li>
+        <li class="mc-panel"><span class="rule-num">8</span>Bygg ikke i nærheten av andres claim uten tillatelse.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══════════ KOBLE TIL ═══════════ -->
+  <section id="koble-til">
+    <div class="container">
+      <h2 class="sec-title">Koble til</h2>
+
+      <div class="mc-panel" style="padding: 24px 28px; max-width: 620px;">
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <div class="step-body">
+              <strong>Åpne Minecraft Java Edition</strong>
+              <span>Start spillet og gå til hovedmenyen.</span>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <div class="step-body">
+              <strong>Gå til Multiplayer</strong>
+              <span>Trykk på "Multiplayer" i menyen.</span>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">3</span>
+            <div class="step-body">
+              <strong>Legg til server</strong>
+              <span>Trykk "Add Server" / "Legg til server".</span>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">4</span>
+            <div class="step-body">
+              <strong>Skriv inn server-IP</strong>
+              <span>Skriv inn: <strong
+                  style="color:var(--green);text-shadow:1px 1px 0 #1a3a1a">norgesmp.com</strong></span>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">5</span>
+            <div class="step-body">
+              <strong>Trykk Ferdig og koble til!</strong>
+              <span>Dobbeltklikk på serveren i listen og bli med.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="ip-big-btn" id="connect-ip-btn" aria-label="Klikk for å kopiere server-IP: norgesmp.com">
+        <span class="ip-big-text">norgesmp.com</span>
+        <span class="ip-big-copy-icon">📋</span>
+      </button>
+      <p class="ip-hint">Klikk for å kopiere IP-adressen</p>
+      <div class="version-tag">✦ Minecraft Java Edition 1.21.1</div>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>
+          <div class="footer-logo">NorgeSMP</div>
+          <p class="footer-copy">© NorgeSMP 2025</p>
+        </div>
+        <a href="https://buymeacoffee.com/emilianovec" target="_blank" rel="noopener noreferrer" class="btn btn-gold"
+          id="footer-support-btn">
+          ☕ Støtt oss
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════════ DONATION TOAST ═══════════ -->
+  <div id="donation-toast" role="complementary" aria-label="Støtt oss">
+    <span class="toast-icon">☕</span>
+    <div class="toast-body">
+      <p>
+        <strong>Liker du serveren?</strong><br>
+        Vi setter stor pris på en liten donasjon – det koster mye å drifte en
+        Minecraft-server på eget strømnett og hardware. Hver krone hjelper! 🙏
+      </p>
+      <a href="https://buymeacoffee.com/emilianovec" target="_blank" rel="noopener noreferrer" class="btn btn-gold"
+        id="toast-support-btn" style="font-size:1.1rem; padding:8px 18px;">
+        ☕ Støtt oss
+      </a>
+    </div>
+    <button class="toast-close" id="toast-close-btn" aria-label="Lukk">✕</button>
+  </div>
+
+  <!-- ═══════════ JAVASCRIPT ═══════════ -->
+  <script>
+    /* Server status */
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+    const playersTxt = document.getElementById('players-text');
+
+    async function fetchServerStatus() {
+      try {
+        const res = await fetch('https://api.mcsrvstat.us/3/norgesmp.com');
+        const data = await res.json();
+        statusDot.className = 'dot';
+        if (data.online) {
+          statusDot.classList.add('online');
+          statusText.textContent = '🟢 Online';
+          const on = data.players?.online ?? 0;
+          const max = data.players?.max ?? 0;
+          playersTxt.textContent = `${on} / ${max} spillere`;
+        } else {
+          statusDot.classList.add('offline');
+          statusText.textContent = '🔴 Offline';
+          playersTxt.textContent = '–';
+        }
+      } catch {
+        statusDot.className = 'dot offline';
+        statusText.textContent = '⚫ Ukjent';
+        playersTxt.textContent = '–';
+      }
+    }
+    fetchServerStatus();
+    setInterval(fetchServerStatus, 60000);
+
+    /* Copy IP */
+    const fb = document.getElementById('copy-feedback');
+    let fbT = null;
+
+    function copyIP() {
+      navigator.clipboard.writeText('norgesmp.com').then(showFB).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = 'norgesmp.com';
+        ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showFB();
+      });
+    }
+    function showFB() {
+      fb.classList.add('show');
+      clearTimeout(fbT);
+      fbT = setTimeout(() => fb.classList.remove('show'), 2200);
+    }
+    document.getElementById('hero-ip-btn').addEventListener('click', copyIP);
+    document.getElementById('connect-ip-btn').addEventListener('click', copyIP);
+
+    /* Donation toast */
+    const toast = document.getElementById('donation-toast');
+    const closeBtn = document.getElementById('toast-close-btn');
+    setTimeout(() => toast.classList.add('visible'), 2500);
+    closeBtn.addEventListener('click', () => {
+      toast.style.transition = 'bottom 0.35s cubic-bezier(0.55,0,1,0.45)';
+      toast.classList.remove('visible');
+    });
+
+    /* Mobile nav */
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', open);
+      navToggle.textContent = open ? '✕' : '☰';
+    });
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.textContent = '☰';
+    }));
+  </script>
+</body>
+
+</html>

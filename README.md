@@ -1,1 +1,1 @@
-# www.norgesmp.no
+readme
