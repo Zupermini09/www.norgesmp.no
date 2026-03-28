@@ -183,20 +183,7 @@ body {
 
 .btn-sm { font-size:1rem; padding:7px 16px }
 
-.btn-wip {
-  background: var(--bg-surface);
-  color: var(--text-muted);
-  pointer-events: none;
-  cursor: not-allowed;
-  border-color: transparent;
-}
-.wip-label {
-  font-size: .7rem;
-  background: rgba(212,169,66,.12);
-  color: var(--gold);
-  padding: 1px 6px;
-  border-radius: 3px;
-}
+
 
 /* ═══════════════════════════════════════════
    HERO
